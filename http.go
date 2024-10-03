@@ -140,6 +140,12 @@ func QueryIntArray[T constraints.Integer](r *http.Request, key string) []T {
 	return result
 }
 
+// Returns the named query value as a float64, or zero if the item is missing or not parseable as an integer
+func QueryFloat64(r *http.Request, key string) float64 {
+	f, _ := strconv.ParseFloat(QueryValue(r, key), 64)
+	return f
+}
+
 // EncodeQuery returns a key=value&key2=value2 string for a URL
 func EncodeQuery(kv map[string]string) string {
 	s := ""
