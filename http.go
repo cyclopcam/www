@@ -13,9 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cyclopcam/logs"
-	"github.com/julienschmidt/httprouter"
-	"golang.org/x/exp/constraints"
+	"github.com/cyclopcam/logs/v3"
 )
 
 // RunProtected runs 'func' inside a panic handler that recognizes our special errors,
@@ -53,11 +51,11 @@ func RunProtected(log logs.Log, w http.ResponseWriter, r *http.Request, handler 
 }
 
 // Handle adds a protected HTTP route to router (ie handle will run inside RunProtected, so you get a panic handler).
-func Handle(log logs.Log, router *httprouter.Router, method, path string, handle httprouter.Handle) {
-	wrapper := func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
-		RunProtected(log, w, r, func() { handle(w, r, p) })
+func Handle(log logs.Log, router *http.ServeMux, pattern string, handle http.HandlerFunc) {
+	wrapper := func(w http.ResponseWriter, r *http.Request) {
+		RunProtected(log, w, r, func() { handle.ServeHTTP(w, r) })
 	}
-	router.Handle(method, path, wrapper)
+	router.Handle(pattern, http.HandlerFunc(wrapper))
 }
 
 // ParseID parses a 64-bit integer, and returns zero on failure.
@@ -123,7 +121,7 @@ func QueryInt(r *http.Request, key string) int {
 
 // Returns the named query value as an array of integers, split by commas.
 // Panics if the value is not parseable as an integer.
-func QueryIntArray[T constraints.Integer](r *http.Request, key string) []T {
+func QueryIntArray[T Integer](r *http.Request, key string) []T {
 	result := []T{}
 	raw := QueryValue(r, key)
 	if len(raw) == 0 {
@@ -234,7 +232,7 @@ func CacheSeconds(w http.ResponseWriter, seconds int) {
 
 // Set cache headers instructing the client never to cache
 func CacheNever(w http.ResponseWriter) {
-	w.Header().Set("Cache-Control", fmt.Sprintf("max-age=0"))
+	w.Header().Set("Cache-Control", "max-age=0")
 }
 
 // IsNotModified checks for an If-Modified-Since header, and if modifiedAt is
