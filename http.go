@@ -51,7 +51,7 @@ func RunProtected(log logs.Log, w http.ResponseWriter, r *http.Request, handler 
 }
 
 // Handle adds a protected HTTP route to router (ie handle will run inside RunProtected, so you get a panic handler).
-func Handle(log logs.Log, router *http.ServeMux, pattern string, handle http.HandlerFunc) {
+func Handle(log logs.Log, router *http.ServeMux, pattern string, handle http.Handler) {
 	wrapper := func(w http.ResponseWriter, r *http.Request) {
 		RunProtected(log, w, r, func() { handle.ServeHTTP(w, r) })
 	}
