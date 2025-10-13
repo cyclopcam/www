@@ -1,4 +1,4 @@
-module github.com/cyclopcam/www/v2
+module github.com/cyclopcam/www/v3
 
 go 1.24.6
 
