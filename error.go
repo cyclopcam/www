@@ -28,13 +28,17 @@ func Panic(code int, message string) {
 	panic(HTTPError{code, message})
 }
 
+func BadRequest() HTTPError {
+	return HTTPError{http.StatusBadRequest, "Bad Request"}
+}
+
+func BadRequestf(format string, args ...interface{}) HTTPError {
+	return HTTPError{http.StatusBadRequest, fmt.Sprintf(format, args...)}
+}
+
 // PanicBadRequest panics with a 400 Bad Request.
 func PanicBadRequest() {
 	panic(BadRequest())
-}
-
-func BadRequest() HTTPError {
-	return HTTPError{http.StatusBadRequest, "Bad Request"}
 }
 
 // PanicBadRequestf panics with a 400 Bad Request.
@@ -42,13 +46,29 @@ func PanicBadRequestf(format string, args ...interface{}) {
 	panic(BadRequestf(format, args...))
 }
 
-func BadRequestf(format string, args ...interface{}) HTTPError {
-	return HTTPError{http.StatusBadRequest, fmt.Sprintf(format, args...)}
+func Unauthorized() HTTPError {
+	return HTTPError{http.StatusUnauthorized, "Unauthorized"}
 }
 
-// PanicForbidden panics with a 403 Forbidden.
+func Unauthorizedf(format string, args ...interface{}) HTTPError {
+	return HTTPError{http.StatusUnauthorized, fmt.Sprintf(format, args...)}
+}
+
+// PanicForbidden panics with a 401 Unauthorized.
 func PanicUnauthorized() {
 	panic(Unauthorized())
+}
+
+func PanicUnauthorizedf(format string, args ...interface{}) {
+	panic(Unauthorizedf(format, args...))
+}
+
+func Forbidden() HTTPError {
+	return HTTPError{http.StatusForbidden, "Forbidden"}
+}
+
+func Forbiddenf(format string, args ...interface{}) HTTPError {
+	return HTTPError{http.StatusForbidden, fmt.Sprintf(format, args...)}
 }
 
 // PanicForbidden panics with a 403 Forbidden.
@@ -60,16 +80,8 @@ func PanicForbiddenf(format string, args ...interface{}) {
 	panic(Forbiddenf(format, args...))
 }
 
-func Forbiddenf(format string, args ...interface{}) HTTPError {
-	return HTTPError{http.StatusForbidden, fmt.Sprintf(format, args...)}
-}
-
-func Unauthorized() HTTPError {
-	return HTTPError{http.StatusUnauthorized, "Unauthorized"}
-}
-
-func Forbidden() HTTPError {
-	return HTTPError{http.StatusForbidden, "Forbidden"}
+func NotFound() HTTPError {
+	return HTTPError{http.StatusNotFound, "Not Found"}
 }
 
 // PanicNotFound panics with a 404 Not Found.
@@ -77,8 +89,8 @@ func PanicNotFound() {
 	panic(NotFound())
 }
 
-func NotFound() HTTPError {
-	return HTTPError{http.StatusNotFound, "Not Found"}
+func NoContent() HTTPError {
+	return HTTPError{http.StatusNoContent, "No Content"}
 }
 
 // PanicNoContent panics with a 204 No Content.
@@ -86,8 +98,12 @@ func PanicNoContent() {
 	panic(NoContent())
 }
 
-func NoContent() HTTPError {
-	return HTTPError{http.StatusNoContent, "No Content"}
+func ServerError(msg string) HTTPError {
+	return HTTPError{http.StatusInternalServerError, msg}
+}
+
+func ServerErrorf(format string, args ...interface{}) HTTPError {
+	return HTTPError{http.StatusInternalServerError, fmt.Sprintf(format, args...)}
 }
 
 // PanicServerError panics with a 500 Internal Server Error
@@ -95,17 +111,9 @@ func PanicServerError(msg string) {
 	panic(ServerError(msg))
 }
 
-func ServerError(msg string) HTTPError {
-	return HTTPError{http.StatusInternalServerError, msg}
-}
-
 // PanicServerErrorf panics with a 500 Internal Server Error
 func PanicServerErrorf(format string, args ...interface{}) {
 	panic(ServerErrorf(format, args...))
-}
-
-func ServerErrorf(format string, args ...interface{}) HTTPError {
-	return HTTPError{http.StatusInternalServerError, fmt.Sprintf(format, args...)}
 }
 
 // Check causes a panic if err is not nil.
