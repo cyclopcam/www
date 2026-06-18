@@ -19,6 +19,7 @@ func (e HTTPError) Error() string {
 	return fmt.Sprintf("%v %v", e.Code, e.Message)
 }
 
+// Create an HTTPError
 func Error(code int, message string) HTTPError {
 	return HTTPError{code, message}
 }
