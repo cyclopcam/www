@@ -22,11 +22,18 @@ func Do(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
+// Returns nil if the status code is 200 and the JSON decodes, or an error in all other cases.
 func FetchJSON(req *http.Request, output any) error {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return err
 	}
+	return HandleJSONFetch(resp, output)
+}
+
+// Returns nil if the status code is 200 and the JSON decodes, or an error in all other cases.
+// Closes resp.Body before returning.
+func HandleJSONFetch(resp *http.Response, output any) error {
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		respB, _ := io.ReadAll(resp.Body)
