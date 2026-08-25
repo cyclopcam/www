@@ -13,7 +13,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cyclopcam/logs/v3"
+	"github.com/cyclopcam/logs/v4"
 )
 
 // RunProtected runs 'func' inside a panic handler that recognizes our special errors,
